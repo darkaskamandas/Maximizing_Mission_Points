@@ -1,0 +1,107 @@
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
+using System.Text;
+using System;
+
+class Solution {
+
+   public static int[,] HeightArrange(int[,] _in)
+{
+
+    int[,] _tmpData = new int[1, 4];
+
+    for (int _j = 0; _j < _in.Length/4; _j++)
+    {
+
+        int _tmpMin = _in[_j, 2];
+        for (int _i = _j; _i < _in.Length/4; _i++)
+        {
+
+            if (_in[_i, 2] <= _tmpMin)
+            {
+                _tmpMin = _in[_i, 2];
+                _tmpData[0, 0] = _in[_j, 0];
+                _tmpData[0, 1] = _in[_j, 1];
+                _tmpData[0, 2] = _in[_j, 2];
+                _tmpData[0, 3] = _in[_j, 3];
+
+                _in[_j, 0] = _in[_i, 0];
+                _in[_j, 1] = _in[_i, 1];
+                _in[_j, 2] = _in[_i, 2];
+                _in[_j, 3] = _in[_i, 3];
+
+                _in[_i, 0] = _tmpData[0, 0];
+                _in[_i, 1] = _tmpData[0, 1];
+                _in[_i, 2] = _tmpData[0, 2];
+                _in[_i, 3] = _tmpData[0, 3];
+
+            }
+
+        }
+    }
+
+    return _in;
+}
+
+static void Main(string[] args)
+{
+    string[] nD_latD_long = Console.ReadLine().Trim().Split(' ');
+
+    int n = Convert.ToInt32(nD_latD_long[0]);
+
+    int d_lat = Convert.ToInt32(nD_latD_long[1]);
+
+    int d_long = Convert.ToInt32(nD_latD_long[2]);
+    int[,] _data = new int[n,4];
+    for (int nItr = 0; nItr < n; nItr++)
+    {
+        string[] latitudeLongitude = Console.ReadLine().Split(' ');
+
+        int latitude = Convert.ToInt32(latitudeLongitude[0]);
+
+        int longitude = Convert.ToInt32(latitudeLongitude[1]);
+
+        int height = Convert.ToInt32(latitudeLongitude[2]);
+
+        int points = Convert.ToInt32(latitudeLongitude[3]);
+
+        // Write Your Code Here
+        _data[nItr,0] = latitude;
+        _data[nItr,1] = longitude;
+        _data[nItr,2] = height;
+        _data[nItr,3] = points;
+    }
+    // Arrange Cities based on Their Height
+    _data = HeightArrange(_data);
+
+     int _maxReachedPoint = int.MinValue;  
+     for(int _startCity=0; _startCity < n - 1; _startCity++) { 
+     int _curCity = _startCity;
+     int _nxtCity=_curCity;
+     int _sumPonits = _data[_curCity, 3];
+
+        while (_nxtCity < n - 1)
+        {
+        _nxtCity++;
+            if ((Math.Abs(_data[_curCity, 0] - _data[_nxtCity, 0]) <= d_lat) & (Math.Abs(_data[_curCity, 1] - _data[_nxtCity, 1]) <= d_long))
+            {
+                _sumPonits += _data[_nxtCity, 3];
+                _curCity = _nxtCity;
+                _maxReachedPoint = (_maxReachedPoint < _sumPonits) ? _sumPonits : _maxReachedPoint;
+            }
+        }
+
+    }
+    Console.WriteLine(_maxReachedPoint);
+
+}
+}
